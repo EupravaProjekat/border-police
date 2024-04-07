@@ -1,0 +1,158 @@
+<mxfile host="app.diagrams.net" modified="2024-04-06T15:59:13.686Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="9RChEOFvjXCNNRhq7h8H" version="24.2.2" type="device">
+  <diagram name="Page-1" id="OHJ2rtRn3eGb4zYdda0O">
+    <mxGraphModel dx="2924" dy="3332" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="GGwjf5_lbYx24LlGWN29-2" value="Gradjanin&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-110" y="-740" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-3" value="Operater Granicne policije&amp;nbsp;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="-950" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-7" value="Podnosenje zahteva za prelazak granice sa specificnim teretom ili vozilom" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="-940" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-9" value="" style="endArrow=none;html=1;rounded=0;entryX=0.003;entryY=0.692;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.761;exitY=-0.022;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-2" target="GGwjf5_lbYx24LlGWN29-7" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="-680" as="sourcePoint" />
+            <mxPoint x="450" y="-730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-12" value="Podnosenje zahteva za privremeni izvoz vozila&amp;nbsp;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="-790" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-13" value="" style="endArrow=none;html=1;rounded=0;entryX=-0.003;entryY=0.364;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-2" target="GGwjf5_lbYx24LlGWN29-12" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="83" y="-741" as="sourcePoint" />
+            <mxPoint x="161" y="-817" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-14" value="Prijavljivanje na sistem" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="420" y="-1180" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-15" value="" style="endArrow=none;html=1;rounded=0;entryX=0.007;entryY=0.336;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-2" target="GGwjf5_lbYx24LlGWN29-14" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="93" y="-731" as="sourcePoint" />
+            <mxPoint x="349" y="-706" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-16" value="" style="endArrow=none;html=1;rounded=0;entryX=0.919;entryY=0.183;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.15;exitY=0.2;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-3" target="GGwjf5_lbYx24LlGWN29-14" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="103" y="-721" as="sourcePoint" />
+            <mxPoint x="351" y="-560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-19" value="Upravljanje i odgovaranje na zahteve za prelazak sa specijalnim teretom ili ovzilom" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="650" y="-900" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-20" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-3" target="GGwjf5_lbYx24LlGWN29-19" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="956" y="-730" as="sourcePoint" />
+            <mxPoint x="506" y="-578" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-21" value="Upravljanje i odgovaranje na zahteve za privremeni izvoz" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="650" y="-750" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-22" value="" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-3" target="GGwjf5_lbYx24LlGWN29-21" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="935" y="-610" as="sourcePoint" />
+            <mxPoint x="486" y="-448" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-24" value="Registrovanje korisnickog naloga" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-150" y="-990" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-25" value="" style="endArrow=none;html=1;rounded=0;entryX=0.33;entryY=0.968;entryDx=0;entryDy=0;exitX=0.456;exitY=-0.078;exitDx=0;exitDy=0;exitPerimeter=0;entryPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-2" target="GGwjf5_lbYx24LlGWN29-24" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="555" y="-860" as="sourcePoint" />
+            <mxPoint x="106" y="-698" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-26" value="Pregled zadrzavanja vozila i specijalnih obavestenja na granicnim prelazima&amp;nbsp;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="-640" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-27" value="" style="endArrow=none;html=1;rounded=0;entryX=-0.003;entryY=0.447;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.9;exitY=0.867;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-2" target="GGwjf5_lbYx24LlGWN29-26" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="103" y="-721" as="sourcePoint" />
+            <mxPoint x="351" y="-530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-28" value="Dodavanje stanja zadrzavanja i specijalnih obavestenja" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="650" y="-1050" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-29" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="GGwjf5_lbYx24LlGWN29-3" target="GGwjf5_lbYx24LlGWN29-28" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="955" y="-718" as="sourcePoint" />
+            <mxPoint x="506" y="-548" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-30" value="Provera sa mup da li je za vozilo izdata poternica" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="-850" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-34" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;startArrow=classic;startFill=1;" parent="1" source="GGwjf5_lbYx24LlGWN29-30" target="GGwjf5_lbYx24LlGWN29-21" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="550" y="-830" as="sourcePoint" />
+            <mxPoint x="687" y="-936" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-36" value="&amp;lt;INCLUDE&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="GGwjf5_lbYx24LlGWN29-34" vertex="1" connectable="0">
+          <mxGeometry x="-0.053" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-35" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;exitX=0.824;exitY=0.083;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.007;entryY=0.551;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=classic;startFill=1;" parent="1" target="GGwjf5_lbYx24LlGWN29-19" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="-820" as="sourcePoint" />
+            <mxPoint x="697" y="-926" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-37" value="&amp;lt;INCLUDE&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="GGwjf5_lbYx24LlGWN29-35" vertex="1" connectable="0">
+          <mxGeometry x="0.0076" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-39" value="Pregled&amp;nbsp;Informacija o granicnim propisima i procedurama" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="-480" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-40" value="" style="endArrow=none;html=1;rounded=0;entryX=-0.018;entryY=0.454;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.9;exitY=0.867;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" target="GGwjf5_lbYx24LlGWN29-39" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-73" y="-678" as="sourcePoint" />
+            <mxPoint x="159" y="-576" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-42" value="Elektronsko podnosenje carinske deklaracije" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="-320" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-43" value="" style="endArrow=none;html=1;rounded=0;entryX=0.022;entryY=0.433;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.9;exitY=0.867;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" target="GGwjf5_lbYx24LlGWN29-42" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-63" y="-668" as="sourcePoint" />
+            <mxPoint x="157" y="-416" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-44" value="Pregled carinskih deklaracija" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="650" y="-600" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GGwjf5_lbYx24LlGWN29-45" value="" style="endArrow=none;html=1;rounded=0;exitX=0.25;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.992;entryY=0.371;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="GGwjf5_lbYx24LlGWN29-44" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1067" y="-934" as="sourcePoint" />
+            <mxPoint x="802" y="-725" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rKMShVQMaQTTR0CVtVHr-1" value="Sistem&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="-250" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rKMShVQMaQTTR0CVtVHr-2" value="Obavestavanje gradjana o ishodu zahteva&amp;nbsp;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="-430" width="170" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rKMShVQMaQTTR0CVtVHr-3" value="" style="endArrow=none;html=1;rounded=0;entryX=0;entryY=0.3333333333333333;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.785;exitY=0.954;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="rKMShVQMaQTTR0CVtVHr-2" target="rKMShVQMaQTTR0CVtVHr-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-63" y="-668" as="sourcePoint" />
+            <mxPoint x="157" y="-416" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
