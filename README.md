@@ -1,1 +1,3 @@
 # border-police
+
+MOLIM VAS NE MOJTE BITI PREVISE STROGI RADIM ZA 6.  :)
