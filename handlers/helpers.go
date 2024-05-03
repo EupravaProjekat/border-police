@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/MihajloJankovic/border-police/Models"
+	"github.com/MihajloJankovic/border-police/Repo"
 	"io"
 	"net/http"
 	"time"
@@ -42,11 +44,11 @@ func GenerateJwt(w http.ResponseWriter, email string, role string) string {
 	}
 	return tokenString
 }
-func DecodeBody(r io.Reader) (*protos.ProfileResponse, error) {
+func DecodeBody(r io.Reader) (*Models.Request, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protos.ProfileResponse
+	var rt Models.Request
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}
@@ -185,7 +187,7 @@ func RenderJSON(w http.ResponseWriter, v interface{}) {
 		return
 	}
 }
-func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
+func ValidateJwt(r *http.Request, h *Repo.Repo) *Models.User {
 	tokenString := r.Header.Get("jwt")
 	if tokenString == "" {
 		return nil
@@ -209,7 +211,7 @@ func ValidateJwt(r *http.Request, h *Porfilehendler) *protos.ProfileResponse {
 	if float64(time.Now().UTC().Unix()) > exp {
 		return nil
 	}
-	rt, err := h.GetProfileInner(email)
+	rt, err := h.GetByEmail(email)
 	if err != nil {
 		return nil
 	}

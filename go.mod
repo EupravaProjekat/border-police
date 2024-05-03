@@ -1,4 +1,4 @@
-module github.com/MihajloJankovic/RestService
+module github.com/MihajloJankovic/border-police
 
 go 1.21.3
 

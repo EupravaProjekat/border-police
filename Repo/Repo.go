@@ -3,7 +3,7 @@ package Repo
 import (
 	"context"
 	"fmt"
-	protos "github.com/MihajloJankovic/accommodation-service/protos/main"
+	"github.com/MihajloJankovic/border-police/Models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -13,12 +13,6 @@ import (
 	"time"
 )
 
-type User struct {
-	Id       int
-	Email    string
-	Role     string
-	Requests []string
-}
 type Repo struct {
 	logger *log.Logger
 	cli    *mongo.Client
@@ -65,12 +59,12 @@ func (ar *Repo) Ping() {
 	}
 	fmt.Println(databases)
 }
-func (ar *Repo) GetAll() ([]*User, error) {
+func (ar *Repo) GetAll() ([]*Models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	Collection := ar.getCollection()
-	var accommodationsSlice []*User
+	var accommodationsSlice []*Models.User
 
 	accommodationCursor, err := Collection.Find(ctx, bson.M{})
 	if err != nil {
@@ -85,7 +79,7 @@ func (ar *Repo) GetAll() ([]*User, error) {
 	}(accommodationCursor, ctx)
 
 	for accommodationCursor.Next(ctx) {
-		var user User
+		var user Models.User
 		if err := accommodationCursor.Decode(&user); err != nil {
 			ar.logger.Println(err)
 			return nil, err
@@ -101,12 +95,12 @@ func (ar *Repo) GetAll() ([]*User, error) {
 	return accommodationsSlice, nil
 }
 
-func (ar *Repo) GetByEmail(email string) (*protos.AccommodationResponse, error) {
+func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	accCollection := ar.getCollection()
-	var acc protos.AccommodationResponse
+	var acc Models.User
 
 	err := accCollection.FindOne(ctx, bson.M{"email": email}).Decode(&acc)
 	if err != nil {
@@ -116,8 +110,25 @@ func (ar *Repo) GetByEmail(email string) (*protos.AccommodationResponse, error) 
 
 	return &acc, nil
 }
+func (ar *Repo) NewRequest(Request Models.Request, email string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-func (ar *Repo) Create(user *User) error {
+	accCollection := ar.getCollection()
+	update := bson.M{
+		"$push": bson.M{
+			"requests": Request,
+		},
+	}
+	result, err := accCollection.UpdateOne(ctx, bson.M{"email": email}, update)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("updated %v documents.\n", result.ModifiedCount)
+	return nil
+}
+
+func (ar *Repo) Create(user *Models.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	accommodationCollection := ar.getCollection()

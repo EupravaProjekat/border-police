@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"context"
 	"errors"
+	"github.com/MihajloJankovic/border-police/Repo"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/gorilla/mux"
 	"log"
@@ -11,25 +11,16 @@ import (
 )
 
 type Borderhendler struct {
-	l *log.Logger
-}
-type RequestRegister struct {
-	Email     string
-	Firstname string
-	Lastname  string
-	Birthday  string
-	Gender    string
-	Role      string
-	Password  string
-	Username  string
+	l    *log.Logger
+	repo *Repo.Repo
 }
 
-func NewBorderhendler(l *log.Logger, cc protos.ProfileClient) *Borderhendler {
-	return &Borderhendler{l}
+func NewBorderhendler(l *log.Logger, r *Repo.Repo) *Borderhendler {
+	return &Borderhendler{l, r}
 
 }
 
-func (h *Borderhendler) SetProfile(w http.ResponseWriter, r *http.Request) {
+func (h *Borderhendler) CheckIfUserExists(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
 	if err != nil {
@@ -41,24 +32,24 @@ func (h *Borderhendler) SetProfile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
 		return
 	}
-	res := ValidateJwt(r, h)
+	res := ValidateJwt(r, h.repo)
 	if res == nil {
 		err := errors.New("jwt error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 	re := res
-	rt, err := h.GetProfileInner(re.GetEmail())
+	response, err := h.repo.GetByEmail(re.Email)
 	if err != nil {
-		log.Printf("Operation failed : %v\n", err)
-		http.Error(w, err.Error(), http.StatusForbidden)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-	if re.GetEmail() != rt.GetEmail() {
+	if re.Email != response.Email {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
+
 }
 
 func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
@@ -66,21 +57,31 @@ func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	emaila := mux.Vars(r)["email"]
 	ee := new(protos.ProfileRequest)
 	ee.Email = emaila
-	res := ValidateJwt(r, h)
+	res := ValidateJwt(r, h.repo)
 	if res == nil {
 		err := errors.New("jwt error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 	re := res
-	if re.GetEmail() != ee.GetEmail() {
+	responsea, err := h.repo.GetByEmail(re.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	if re.Email != responsea.Email {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	response, err := h.cc.GetProfile(context.Background(), ee)
+	if re.Email != ee.GetEmail() {
+		err := errors.New("authorization error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	response, err := h.repo.GetByEmail(ee.Email)
 	if err != nil || response == nil {
-		log.Printf("RPC failed: %v\n", err)
+		log.Printf("Operation Failed: %v\n", err)
 		w.WriteHeader(http.StatusNotAcceptable)
 		_, err := w.Write([]byte("Profile not found"))
 		if err != nil {
@@ -92,7 +93,7 @@ func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, response)
 }
 
-func (h *Borderhendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 
 	contentType := r.Header.Get("Content-Type")
 	mediatype, _, err := mime.ParseMediaType(contentType)
@@ -110,30 +111,35 @@ func (h *Borderhendler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
 	}
-	res := ValidateJwt(r, h)
+	res := ValidateJwt(r, h.repo)
 	if res == nil {
 		err := errors.New("jwt error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 	re := res
-	if re.GetEmail() != rt.GetEmail() {
+	responsea, err := h.repo.GetByEmail(re.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+	if re.Email != responsea.Email {
 		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	_, err = h.cc.UpdateProfile(context.Background(), rt)
+	err = h.repo.NewRequest(*rt,re.Email)
 	if err != nil {
-		log.Printf("RPC failed: %v\n", err)
+		log.Printf("Operation failed: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write([]byte("couldn't update profile"))
+		_, err := w.Write([]byte("couldn't add request"))
 		if err != nil {
 			return
 		}
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte("successfully update profile"))
+	_, err = w.Write([]byte("successfully added request"))
 	if err != nil {
 		return
 	}

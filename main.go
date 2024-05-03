@@ -42,8 +42,8 @@ func main() {
 	router.StrictSlash(true)
 	//profile
 	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
-	router.HandleFunc("/update-profile", hh.UpdateProfile).Methods("POST")
-	router.HandleFunc("/deletehost/{email}", hhAuth.DeleteHost).Methods("GET")
+	router.HandleFunc("/newrequest", hh.NewRequest).Methods("POST")
+	router.HandleFunc("/checkifuserexists", hh.CheckIfUserExists).Methods("GET")
 	router.HandleFunc("/deleteguest/{email}", hhAuth.DeleteAccount).Methods("GET")
 	//accommondation
 	router.HandleFunc("/accommodation/{email}", acch.GetAccommodation).Methods("GET")
