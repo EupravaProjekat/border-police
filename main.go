@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"errors"
-	"github.com/MihajloJankovic/border-police/Repo"
-	"github.com/MihajloJankovic/border-police/handlers"
+	"github.com/EupravaProjekat/border-police/Repo"
+	"github.com/EupravaProjekat/border-police/handlers"
 	habb "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
@@ -44,32 +44,7 @@ func main() {
 	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
 	router.HandleFunc("/newrequest", hh.NewRequest).Methods("POST")
 	router.HandleFunc("/checkifuserexists", hh.CheckIfUserExists).Methods("GET")
-	router.HandleFunc("/deleteguest/{email}", hhAuth.DeleteAccount).Methods("GET")
-	//accommondation
-	router.HandleFunc("/accommodation/{email}", acch.GetAccommodation).Methods("GET")
-	router.HandleFunc("/accommodations", acch.GetAllAccommodation).Methods("GET")
-	router.HandleFunc("/add-accommodation", acch.SetAccommodation).Methods("POST")
-	router.HandleFunc("/update-accommodation", acch.UpdateAccommodation).Methods("POST")
-	router.HandleFunc("/accomondation-one/{id}", acch.GetOneAccommodation).Methods("GET")
-	//reservation
-	router.HandleFunc("/reservation/{id}", resh.GetReservation).Methods("GET")
-	router.HandleFunc("/reservations", resh.GetAllReservation).Methods("GET")
-	router.HandleFunc("/set-reservation", resh.SetReservation).Methods("POST")
-	router.HandleFunc("/update-reservation", resh.UpdateReservation).Methods("POST")
-	router.HandleFunc("/getallresbyemail", resh.GetReservationsByEmail).Methods("POST")
-	router.HandleFunc("/deletereservation", resh.DeleteReservationById).Methods("POST")
-
-	//auth
-	router.HandleFunc("/register", hh.SetProfile).Methods("POST")
-	router.HandleFunc("/login", hhAuth.Login).Methods("POST")
-	router.HandleFunc("/getTicket/{email}", hhAuth.GetTicket).Methods("GET")
-	router.HandleFunc("/activate/{email}/{ticket}", hhAuth.Activate).Methods("GET")
-	router.HandleFunc("/change-password", hhAuth.ChangePassword).Methods("POST")
-	router.HandleFunc("/request-reset", hhAuth.RequestPasswordReset).Methods("POST")
-	router.HandleFunc("/reset", hhAuth.ResetPassword).Methods("POST")
-	//avaibility
-	router.HandleFunc("/set-avaibility", hhava.SetAvability).Methods("POST")
-	router.HandleFunc("/get-all-avaibility", hhava.GetAllbyId).Methods("POST")
+	router.HandleFunc("/getrequest/{id}", hh.GetRequest).Methods("GET")
 	//router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
 	//TODO @MIHAJLO trace back to error root :D
 
@@ -81,9 +56,9 @@ func main() {
 	corsRouter := habb.CORS(originsOk, headersOk, methodsOk)(router)
 
 	// Start the server
-	srv := &http.Server{Addr: ":9090", Handler: corsRouter}
+	srv := &http.Server{Addr: ":9098", Handler: corsRouter}
 	go func() {
-		log.Println("server starting")
+		log.Println("server starting border")
 		if err := srv.ListenAndServe(); err != nil {
 			if !errors.Is(err, http.ErrServerClosed) {
 				log.Fatal(err)

@@ -8,8 +8,11 @@ type User struct {
 
 // SpecialCross or temporaryExport
 type Request struct {
-	uuid           string
+	Uuid           string
 	RequestType    string
 	CarPlateNumber string
 	Description    string
+}
+type GetRequest struct {
+	Uuid string
 }

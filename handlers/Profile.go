@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"errors"
-	"github.com/MihajloJankovic/border-police/Repo"
+	"github.com/EupravaProjekat/border-police/Repo"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/gorilla/mux"
 	"log"
@@ -128,7 +128,7 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	err = h.repo.NewRequest(*rt,re.Email)
+	err = h.repo.NewRequest(rt, re.Email)
 	if err != nil {
 		log.Printf("Operation failed: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -143,4 +143,41 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+}
+func (h *Borderhendler) GetRequest(w http.ResponseWriter, r *http.Request) {
+
+	contentType := r.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		err := errors.New("expect application/json Content-Type")
+		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := DecodeBody2(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+	res := ValidateJwt(r, h.repo)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	respon, err := h.repo.GetRequest(rt.Uuid)
+	if err != nil {
+		log.Printf("Operation failed: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write([]byte("couldn't add request"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	RenderJSON(w, respon)
+	w.WriteHeader(http.StatusOK)
 }

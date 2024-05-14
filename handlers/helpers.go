@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/MihajloJankovic/border-police/Models"
-	"github.com/MihajloJankovic/border-police/Repo"
+	"github.com/EupravaProjekat/border-police/Models"
+	"github.com/EupravaProjekat/border-police/Repo"
 	"io"
 	"net/http"
 	"time"
@@ -55,11 +55,11 @@ func DecodeBody(r io.Reader) (*Models.Request, error) {
 	return &rt, nil
 }
 
-func DecodeBodyAva(r io.Reader) (*protosava.CheckSet, error) {
+func DecodeBody2(r io.Reader) (*Models.GetRequest, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosava.CheckSet
+	var rt Models.GetRequest
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}
@@ -129,16 +129,6 @@ func DecodeBodyRes2(r io.Reader) (*protosRes.Emaill, error) {
 	dec.DisallowUnknownFields()
 
 	var rt protosRes.Emaill
-	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
-		return nil, err
-	}
-	return &rt, nil
-}
-func DecodeBodyAuth(r io.Reader) (*RequestRegister, error) {
-	dec := json.NewDecoder(r)
-	dec.DisallowUnknownFields()
-
-	var rt RequestRegister
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}

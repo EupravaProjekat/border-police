@@ -3,7 +3,7 @@ package Repo
 import (
 	"context"
 	"fmt"
-	"github.com/MihajloJankovic/border-police/Models"
+	"github.com/EupravaProjekat/border-police/Models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -94,7 +94,56 @@ func (ar *Repo) GetAll() ([]*Models.User, error) {
 
 	return accommodationsSlice, nil
 }
+func (ar *Repo) GetRequest(uuid string) (*Models.Request, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
+	accCollection := ar.getCollection()
+	var acc Models.Request
+
+	err := accCollection.FindOne(ctx, bson.M{"uuid": uuid}).Decode(&acc)
+	if err != nil {
+		ar.logger.Println(err)
+		return nil, err
+	}
+
+	return &acc, nil
+}
+func (ar *Repo) GetAllRequest() ([]*Models.Request, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var requestSlice []*Models.Request
+
+	Collection := ar.getCollection()
+	requestCursor, err := Collection.Find(ctx, bson.M{})
+	if err != nil {
+		ar.logger.Println(err)
+		return nil, err
+	}
+	defer func(accommodationCursor *mongo.Cursor, ctx context.Context) {
+		err := accommodationCursor.Close(ctx)
+		if err != nil {
+			ar.logger.Println(err)
+		}
+	}(requestCursor, ctx)
+
+	for requestCursor.Next(ctx) {
+		var req Models.Request
+		if err := requestCursor.Decode(&req); err != nil {
+			ar.logger.Println(err)
+			return nil, err
+		}
+		requestSlice = append(requestSlice, &req)
+	}
+
+	if err := requestCursor.Err(); err != nil {
+		ar.logger.Println(err)
+		return nil, err
+	}
+
+	return requestSlice, nil
+}
 func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -110,7 +159,7 @@ func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 
 	return &acc, nil
 }
-func (ar *Repo) NewRequest(Request Models.Request, email string) error {
+func (ar *Repo) NewRequest(Request *Models.Request, email string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
