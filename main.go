@@ -45,6 +45,7 @@ func main() {
 	router.HandleFunc("/newrequest", hh.NewRequest).Methods("POST")
 	router.HandleFunc("/checkifuserexists", hh.CheckIfUserExists).Methods("GET")
 	router.HandleFunc("/getrequest/{id}", hh.GetRequest).Methods("GET")
+	router.HandleFunc("/adddata", hh.NewUser).Methods("POST")
 	//router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
 	//TODO @MIHAJLO trace back to error root :D
 

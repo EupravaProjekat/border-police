@@ -75,11 +75,11 @@ func DecodeBodyAva4(r io.Reader) (*protosRes.ReservationRequest, error) {
 	}
 	return &rt, nil
 }
-func DecodeBodyAva3(r io.Reader) (*protosava.GetAllRequest, error) {
+func DecodeBodyUser(r io.Reader) (*Models.User, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosava.GetAllRequest
+	var rt Models.User
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}

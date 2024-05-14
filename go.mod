@@ -9,6 +9,7 @@ require (
 	github.com/MihajloJankovic/profile-service v0.0.0-20231217093457-6b8b822e74ae
 	github.com/MihajloJankovic/reservation-service v0.0.0-20240209123025-24a373438000
 	github.com/golang-jwt/jwt/v5 v5.2.0
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.1
 	go.mongodb.org/mongo-driver v1.13.1

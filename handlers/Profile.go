@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/EupravaProjekat/border-police/Repo"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"log"
 	"mime"
@@ -51,7 +52,31 @@ func (h *Borderhendler) CheckIfUserExists(w http.ResponseWriter, r *http.Request
 	}
 
 }
+func (h *Borderhendler) NewUser(w http.ResponseWriter, r *http.Request) {
 
+	res := ValidateJwt(r, h.repo)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	rt, err := DecodeBodyUser(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+	err = h.repo.NewUser(rt)
+	if err != nil {
+		log.Printf("Operation Failed: %v\n", err)
+		w.WriteHeader(http.StatusNotAcceptable)
+		_, err := w.Write([]byte("Profile not found"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
 func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	emaila := mux.Vars(r)["email"]
@@ -111,6 +136,8 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
 	}
+	newUUID := uuid.New().String()
+	rt.Uuid = newUUID
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
 		err := errors.New("jwt error")

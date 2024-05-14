@@ -159,6 +159,19 @@ func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 
 	return &acc, nil
 }
+func (ar *Repo) NewUser(Request *Models.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	accCollection := ar.getCollection()
+
+	result, err := accCollection.InsertOne(ctx, &Request)
+	if err != nil {
+		return err
+	}
+	ar.logger.Printf("Documents ID: %v\n", result.InsertedID)
+	return nil
+}
 func (ar *Repo) NewRequest(Request *Models.Request, email string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
