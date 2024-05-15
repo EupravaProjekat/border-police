@@ -54,17 +54,14 @@ func (h *Borderhendler) CheckIfUserExists(w http.ResponseWriter, r *http.Request
 }
 func (h *Borderhendler) NewUser(w http.ResponseWriter, r *http.Request) {
 
-	res := ValidateJwt(r, h.repo)
-	if res == nil {
-		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
 	rt, err := DecodeBodyUser(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
 		return
 	}
+	newUUID := uuid.New().String()
+	rt.Uuid = newUUID
+	rt.Role = "Guest"
 	err = h.repo.NewUser(rt)
 	if err != nil {
 		log.Printf("Operation Failed: %v\n", err)
@@ -77,6 +74,32 @@ func (h *Borderhendler) NewUser(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 }
+func (h *Borderhendler) GetallRequests(w http.ResponseWriter, r *http.Request) {
+
+	res := ValidateJwt(r, h.repo)
+	if res == nil {
+		err := errors.New("jwt error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	if res.Role != "Operator" {
+		err := errors.New("role error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	response, err := h.repo.GetAllRequest()
+	if err != nil {
+		log.Printf("Operation Failed: %v\n", err)
+		w.WriteHeader(http.StatusNotAcceptable)
+		_, err := w.Write([]byte("Requests not found"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, response)
+}
 func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
 	emaila := mux.Vars(r)["email"]
@@ -85,22 +108,6 @@ func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
 		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	re := res
-	responsea, err := h.repo.GetByEmail(re.Email)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
-	}
-	if re.Email != responsea.Email {
-		err := errors.New("authorization error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	if re.Email != ee.GetEmail() {
-		err := errors.New("authorization error")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
@@ -138,6 +145,7 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	newUUID := uuid.New().String()
 	rt.Uuid = newUUID
+	rt.Status = "received"
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
 		err := errors.New("jwt error")
@@ -145,17 +153,8 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	re := res
-	responsea, err := h.repo.GetByEmail(re.Email)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
-	}
-	if re.Email != responsea.Email {
-		err := errors.New("authorization error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
-	err = h.repo.NewRequest(rt, re.Email)
+	re.Requests = append(re.Requests, *rt)
+	err = h.repo.Update(re)
 	if err != nil {
 		log.Printf("Operation failed: %v\n", err)
 		w.WriteHeader(http.StatusBadRequest)

@@ -1,18 +1,20 @@
 package Models
 
 type User struct {
-	Email    string
-	Role     string
-	Requests []Request
+	Uuid     string    `bson:"uuid,omitempty" json:"uuid,omitempty"`
+	Email    string    `bson:"email,omitempty" json:"email,omitempty"`
+	Role     string    `bson:"role,omitempty" json:"role,omitempty"`
+	Requests []Request ` bson:"requests,omitempty" json:"requests,omitempty"`
 }
 
-// SpecialCross or temporaryExport
 type Request struct {
-	Uuid           string
-	RequestType    string
-	CarPlateNumber string
-	Description    string
+	Uuid           string `bson:"uuid,omitempty" json:"uuid,omitempty"`
+	RequestType    string `bson:"request_type,omitempty" json:"request_type,omitempty"`
+	CarPlateNumber string `bson:"car_plate_number,omitempty" json:"car_plate_number,omitempty"`
+	Description    string `bson:"description,omitempty" json:"description,omitempty"`
+	Status         string `bson:"status,omitempty" json:"status,omitempty"`
 }
+
 type GetRequest struct {
-	Uuid string
+	Uuid string `bson:"uuid,omitempty" json:"uuid,omitempty"`
 }

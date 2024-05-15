@@ -113,36 +113,39 @@ func (ar *Repo) GetAllRequest() ([]*Models.Request, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var requestSlice []*Models.Request
+	var allRequests []*Models.Request
 
 	Collection := ar.getCollection()
-	requestCursor, err := Collection.Find(ctx, bson.M{})
+	cursor, err := Collection.Find(ctx, bson.M{})
 	if err != nil {
-		ar.logger.Println(err)
-		return nil, err
+		log.Fatal(err)
 	}
-	defer func(accommodationCursor *mongo.Cursor, ctx context.Context) {
-		err := accommodationCursor.Close(ctx)
+	defer cursor.Close(ctx)
+
+	// Iterate over the cursor
+	for cursor.Next(ctx) {
+		var user Models.User
+		err := cursor.Decode(&user)
 		if err != nil {
-			ar.logger.Println(err)
+			log.Fatal(err)
 		}
-	}(requestCursor, ctx)
-
-	for requestCursor.Next(ctx) {
-		var req Models.Request
-		if err := requestCursor.Decode(&req); err != nil {
-			ar.logger.Println(err)
-			return nil, err
+		// Convert each Request struct to a pointer to Request and append to allRequests
+		for _, req := range user.Requests {
+			allRequests = append(allRequests, &req)
 		}
-		requestSlice = append(requestSlice, &req)
 	}
 
-	if err := requestCursor.Err(); err != nil {
-		ar.logger.Println(err)
-		return nil, err
+	// Check for errors during cursor iteration
+	if err := cursor.Err(); err != nil {
+		log.Fatal(err)
 	}
 
-	return requestSlice, nil
+	// Print all requests
+	for _, req := range allRequests {
+		fmt.Printf("%+v\n", *req) // Dereference the pointer to print the request
+	}
+
+	return allRequests, nil
 }
 func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -172,21 +175,26 @@ func (ar *Repo) NewUser(Request *Models.User) error {
 	ar.logger.Printf("Documents ID: %v\n", result.InsertedID)
 	return nil
 }
-func (ar *Repo) NewRequest(Request *Models.Request, email string) error {
+func (ar *Repo) Update(User *Models.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	accCollection := ar.getCollection()
+	filter := bson.M{"uuid": User.Uuid}
 	update := bson.M{
-		"$push": bson.M{
-			"requests": Request,
+		"$set": bson.M{
+			"requests": User.Requests,
 		},
 	}
-	result, err := accCollection.UpdateOne(ctx, bson.M{"email": email}, update)
+
+	// Perform the update operation
+	updateResult, err := accCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
-	fmt.Printf("updated %v documents.\n", result.ModifiedCount)
+
+	// Check the number of documents updated
+	fmt.Printf("Updated %v document\n", updateResult.ModifiedCount)
 	return nil
 }
 
