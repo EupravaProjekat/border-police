@@ -85,11 +85,11 @@ func DecodeBodyUser(r io.Reader) (*Models.User, error) {
 	}
 	return &rt, nil
 }
-func DecodeBodyAva2(r io.Reader) (*protosava.CheckRequest, error) {
+func VehicleCausing(r io.Reader) (*Models.VehicleCausing, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()
 
-	var rt protosava.CheckRequest
+	var rt Models.VehicleCausing
 	if err := json.Unmarshal(StreamToByte(r), &rt); err != nil {
 		return nil, err
 	}

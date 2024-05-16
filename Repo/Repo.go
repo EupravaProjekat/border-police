@@ -147,6 +147,34 @@ func (ar *Repo) GetAllRequest() ([]*Models.Request, error) {
 
 	return allRequests, nil
 }
+func (ar *Repo) GetAllCausings() ([]*Models.VehicleCausing, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var allRequests []*Models.VehicleCausing
+
+	Collection := ar.getCollectionVehicles()
+	cursor, err := Collection.Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(ctx)
+
+	// Iterate over the cursor
+	for cursor.Next(ctx) {
+		var request Models.VehicleCausing
+		err := cursor.Decode(&request)
+		if err != nil {
+			log.Fatal(err)
+		}
+		allRequests = append(allRequests, &request)
+	}
+	if err := cursor.Err(); err != nil {
+		log.Println(err)
+	}
+
+	return allRequests, nil
+}
 func (ar *Repo) GetByEmail(email string) (*Models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -167,6 +195,19 @@ func (ar *Repo) NewUser(Request *Models.User) error {
 	defer cancel()
 
 	accCollection := ar.getCollection()
+
+	result, err := accCollection.InsertOne(ctx, &Request)
+	if err != nil {
+		return err
+	}
+	ar.logger.Printf("Documents ID: %v\n", result.InsertedID)
+	return nil
+}
+func (ar *Repo) NewCausing(Request *Models.VehicleCausing) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	accCollection := ar.getCollectionVehicles()
 
 	result, err := accCollection.InsertOne(ctx, &Request)
 	if err != nil {
@@ -233,5 +274,10 @@ func (ar *Repo) DeleteByEmail(id string) error {
 func (ar *Repo) getCollection() *mongo.Collection {
 	accommodationDatabase := ar.cli.Database("mongoBorder")
 	accommodationCollection := accommodationDatabase.Collection("border")
+	return accommodationCollection
+}
+func (ar *Repo) getCollectionVehicles() *mongo.Collection {
+	accommodationDatabase := ar.cli.Database("mongoBorder")
+	accommodationCollection := accommodationDatabase.Collection("border-vehicles")
 	return accommodationCollection
 }

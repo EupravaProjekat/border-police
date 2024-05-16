@@ -75,6 +75,61 @@ func (h *Borderhendler) NewUser(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 }
+func (h *Borderhendler) NewCausing(w http.ResponseWriter, r *http.Request) {
+
+	_ = ValidateJwt(r, h.repo)
+
+	if r.Header.Get("intern") != "prosecution-service-secret-code" {
+		err := errors.New("not allowed")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	rt, err := VehicleCausing(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+	newUUID := uuid.New().String()
+	rt.Status = "new"
+	rt.Uuid = newUUID
+	err = h.repo.NewCausing(rt)
+	if err != nil {
+		log.Printf("Operation Failed: %v\n", err)
+		w.WriteHeader(http.StatusNotAcceptable)
+		_, err := w.Write([]byte("Profile not found"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+func (h *Borderhendler) GetallCausings(w http.ResponseWriter, r *http.Request) {
+
+	res := ValidateJwt(r, h.repo)
+	if res == nil {
+		err := errors.New("user doesnt exist")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	if res.Role != "Operator" {
+		err := errors.New("role error")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	response, err := h.repo.GetAllCausings()
+	if err != nil {
+		log.Printf("Operation Failed: %v\n", err)
+		w.WriteHeader(http.StatusNotFound)
+		_, err := w.Write([]byte("Casings not found"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	RenderJSON(w, response)
+}
 func (h *Borderhendler) GetallRequests(w http.ResponseWriter, r *http.Request) {
 
 	res := ValidateJwt(r, h.repo)

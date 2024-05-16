@@ -47,8 +47,8 @@ func main() {
 	router.HandleFunc("/getrequest/{id}", hh.GetRequest).Methods("GET")
 	router.HandleFunc("/adddata", hh.NewUser).Methods("POST")
 	router.HandleFunc("/getallrequests", hh.GetallRequests).Methods("GET")
-	//router.HandleFunc("/check-avaibility", hhava.CheckAvaibility).Methods("POST")
-	//TODO @MIHAJLO trace back to error root :D
+	router.HandleFunc("/getallcausings", hh.GetallCausings).Methods("GET")
+	router.HandleFunc("/newcausing", hh.NewCausing).Methods("POST")
 
 	headersOk := habb.AllowedHeaders([]string{"Content-Type", "jwt", "Authorization"})
 	originsOk := habb.AllowedOrigins([]string{"http://localhost:4200"}) // Replace with your frontend origin
