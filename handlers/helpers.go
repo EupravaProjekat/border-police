@@ -207,6 +207,48 @@ func ValidateJwt(r *http.Request, h *Repo.Repo) *Models.User {
 	}
 	return rt
 }
+func ValidateJwt2(r *http.Request, h *Repo.Repo) string {
+	tokenString := r.Header.Get("jwt")
+	if tokenString == "" {
+		return ""
+	}
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Don't forget to validate the alg is what you expect:
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+		return []byte("SecretYouShouldHide"), nil
+	})
+	if err != nil {
+		return ""
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok == false || token.Valid == false {
+		return ""
+
+	}
+	exp := claims["exp"].(float64)
+	email := claims["email"].(string)
+	if float64(time.Now().UTC().Unix()) > exp {
+		return ""
+	}
+
+	return email
+
+}
+func formatJSON(data []byte) string {
+	var out bytes.Buffer
+	err := json.Indent(&out, data, "", "  ")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	d := out.Bytes()
+	return string(d)
+}
 func DecodeBodyReset(r io.Reader) (*protosAuth.ResetRequest, error) {
 	dec := json.NewDecoder(r)
 	dec.DisallowUnknownFields()

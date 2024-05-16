@@ -1,14 +1,18 @@
 package handlers
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"github.com/EupravaProjekat/border-police/Repo"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"io"
 	"log"
 	"mime"
 	"net/http"
+	"strconv"
 )
 
 type Borderhendler struct {
@@ -35,28 +39,25 @@ func (h *Borderhendler) CheckIfUserExists(w http.ResponseWriter, r *http.Request
 	}
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
-		err := errors.New("jwt error")
-		http.Error(w, err.Error(), http.StatusForbidden)
+		err := errors.New("user doesnt exist")
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	re := res
-	response, err := h.repo.GetByEmail(re.Email)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
-	}
-	if re.Email != response.Email {
-		err := errors.New("authorization error")
-		http.Error(w, err.Error(), http.StatusForbidden)
-		return
-	}
+	w.WriteHeader(http.StatusOK)
 
 }
 func (h *Borderhendler) NewUser(w http.ResponseWriter, r *http.Request) {
 
+	res := ValidateJwt2(r, h.repo)
+
 	rt, err := DecodeBodyUser(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
+		return
+	}
+	if res != rt.Email {
+		err := errors.New("user doesnt exist")
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	newUUID := uuid.New().String()
@@ -78,7 +79,7 @@ func (h *Borderhendler) GetallRequests(w http.ResponseWriter, r *http.Request) {
 
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
-		err := errors.New("jwt error")
+		err := errors.New("user doesnt exist")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
@@ -90,7 +91,7 @@ func (h *Borderhendler) GetallRequests(w http.ResponseWriter, r *http.Request) {
 	response, err := h.repo.GetAllRequest()
 	if err != nil {
 		log.Printf("Operation Failed: %v\n", err)
-		w.WriteHeader(http.StatusNotAcceptable)
+		w.WriteHeader(http.StatusNotFound)
 		_, err := w.Write([]byte("Requests not found"))
 		if err != nil {
 			return
@@ -107,14 +108,14 @@ func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	ee.Email = emaila
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
-		err := errors.New("jwt error")
+		err := errors.New("user doesnt exist")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 	response, err := h.repo.GetByEmail(ee.Email)
 	if err != nil || response == nil {
 		log.Printf("Operation Failed: %v\n", err)
-		w.WriteHeader(http.StatusNotAcceptable)
+		w.WriteHeader(http.StatusNotFound)
 		_, err := w.Write([]byte("Profile not found"))
 		if err != nil {
 			return
@@ -140,15 +141,49 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	rt, err := DecodeBody(r.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusAccepted)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	newUUID := uuid.New().String()
 	rt.Uuid = newUUID
 	rt.Status = "received"
+
+	userData := []byte(`{"plate":"` + rt.CarPlateNumber + `"}`)
+
+	apiUrl := "localhost:9099/platecheck"
+	request, err2 := http.NewRequest("POST", apiUrl, bytes.NewBuffer(userData))
+	request.Header.Set("Content-Type", "application/json; charset=utf-8")
+	request.Header.Set("jwt", r.Header.Get("jwt"))
+	request.Header.Set("intern", r.Header.Get("border-service-secret-code"))
+
+	// send the request
+	client := &http.Client{}
+	response, err2 := client.Do(request)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+	if response.StatusCode != http.StatusOK {
+		err := errors.New("internal server not responding")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	responseBody, err2 := io.ReadAll(response.Body)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+
+	formattedData := formatJSON(responseBody)
+	b, err := strconv.ParseBool(formattedData)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	rt.Vehicle_wanted = b
+	defer response.Body.Close()
+
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
-		err := errors.New("jwt error")
+		err := errors.New("user doesnt exist")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
@@ -157,7 +192,7 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 	err = h.repo.Update(re)
 	if err != nil {
 		log.Printf("Operation failed: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusNotFound)
 		_, err := w.Write([]byte("couldn't add request"))
 		if err != nil {
 			return
@@ -185,20 +220,20 @@ func (h *Borderhendler) GetRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	rt, err := DecodeBody2(r.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusAccepted)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
-		err := errors.New("jwt error")
+		err := errors.New("user doesnt exist")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 	respon, err := h.repo.GetRequest(rt.Uuid)
 	if err != nil {
 		log.Printf("Operation failed: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write([]byte("couldn't add request"))
+		w.WriteHeader(http.StatusNotFound)
+		_, err := w.Write([]byte("couldn't find request"))
 		if err != nil {
 			return
 		}
