@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/EupravaProjekat/border-police/Models"
 	"github.com/EupravaProjekat/border-police/Repo"
 	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/google/uuid"
@@ -203,13 +205,13 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 	rt.Uuid = newUUID
 	rt.Status = "received"
 
-	userData := []byte(`{"plate":"` + rt.CarPlateNumber + `"}`)
+	userData := []byte(`{"plates":"` + rt.CarPlateNumber + `"}`)
 
-	apiUrl := "localhost:9099/platecheck"
+	apiUrl := "http://police-service:9099/checkplateswanted"
 	request, err2 := http.NewRequest("POST", apiUrl, bytes.NewBuffer(userData))
 	request.Header.Set("Content-Type", "application/json; charset=utf-8")
 	request.Header.Set("jwt", r.Header.Get("jwt"))
-	request.Header.Set("intern", r.Header.Get("border-service-secret-code"))
+	request.Header.Set("intern", "border-service-secret-code")
 
 	// send the request
 	client := &http.Client{}
@@ -217,23 +219,23 @@ func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
 	if err2 != nil {
 		fmt.Println(err2)
 	}
-	if response.StatusCode != http.StatusOK {
-		err := errors.New("internal server not responding")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+
 	responseBody, err2 := io.ReadAll(response.Body)
 	if err2 != nil {
 		fmt.Println(err2)
 	}
 
-	formattedData := formatJSON(responseBody)
-	b, err := strconv.ParseBool(formattedData)
+	var resp Models.Response
+	err = json.Unmarshal(responseBody, &resp)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
-	rt.Vehicle_wanted = b
+
+	// Extract the boolean value.
+	b := resp.VehicleWanted
+	fmt.Println(b)
+	rt.VehicleWanted = strconv.FormatBool(b)
 	defer response.Body.Close()
 
 	res := ValidateJwt(r, h.repo)

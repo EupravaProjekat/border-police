@@ -18,9 +18,12 @@ type Request struct {
 	CarPlateNumber string `bson:"car_plate_number,omitempty" json:"car_plate_number,omitempty"`
 	Description    string `bson:"description,omitempty" json:"description,omitempty"`
 	Status         string `bson:"status,omitempty" json:"status,omitempty"`
-	Vehicle_wanted bool   `bson:"vehiclewanted,omitempty" json:"vehiclewanted,omitempty"`
+	VehicleWanted  string `bson:"vehiclewanted,omitempty" json:"vehiclewanted,omitempty"`
 }
 
 type GetRequest struct {
 	Uuid string `bson:"uuid,omitempty" json:"uuid,omitempty"`
+}
+type Response struct {
+	VehicleWanted bool `json:"vehicle_wanted"`
 }
