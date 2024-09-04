@@ -299,3 +299,40 @@ func (h *Borderhendler) GetRequest(w http.ResponseWriter, r *http.Request) {
 	RenderJSON(w, respon)
 	w.WriteHeader(http.StatusOK)
 }
+func (h *Borderhendler) UpdateRequest(w http.ResponseWriter, r *http.Request) {
+
+	contentType := r.Header.Get("Content-Type")
+	mediatype, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if mediatype != "application/json" {
+		err := errors.New("expect application/json Content-Type")
+		http.Error(w, err.Error(), http.StatusUnsupportedMediaType)
+		return
+	}
+	rt, err := DecodeBody2(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	res := ValidateJwt(r, h.repo)
+	if res == nil {
+		err := errors.New("user doesnt exist")
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
+	}
+	respon, err := h.repo.UpdateRequest(rt.Uuid)
+	if err != nil {
+		log.Printf("Operation failed: %v\n", err)
+		w.WriteHeader(http.StatusNotFound)
+		_, err := w.Write([]byte("couldn't find request"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	RenderJSON(w, respon)
+	w.WriteHeader(http.StatusOK)
+}

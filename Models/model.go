@@ -20,6 +20,11 @@ type Request struct {
 	Status         string `bson:"status,omitempty" json:"status,omitempty"`
 	VehicleWanted  string `bson:"vehiclewanted,omitempty" json:"vehiclewanted,omitempty"`
 }
+type News struct {
+	WeitingTime     string `bson:"time,omitempty" json:"time,omitempty"`
+	TimeOfEnterence string `bson:"time_of_enterence,omitempty" json:"time_of_enterence,omitempty"`
+	Message         string `bson:"message,omitempty" json:"message,omitempty"`
+}
 
 type GetRequest struct {
 	Uuid string `bson:"uuid,omitempty" json:"uuid,omitempty"`

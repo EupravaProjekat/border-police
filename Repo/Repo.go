@@ -94,7 +94,8 @@ func (ar *Repo) GetAll() ([]*Models.User, error) {
 
 	return accommodationsSlice, nil
 }
-func (ar *Repo) GetRequest(uuid string) (*Models.Request, error) {
+
+func (ar *Repo) UpdateRequest(uuid string) (*Models.Request, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -102,6 +103,21 @@ func (ar *Repo) GetRequest(uuid string) (*Models.Request, error) {
 	var acc Models.Request
 
 	err := accCollection.FindOne(ctx, bson.M{"uuid": uuid}).Decode(&acc)
+	if err != nil {
+		ar.logger.Println(err)
+		return nil, err
+	}
+
+	return &acc, nil
+}
+func (ar *Repo) GetRequest(uuid string) (*Models.Request, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	accCollection := ar.getCollection()
+	var acc Models.Request
+
+	err := accCollection.FindOne(ctx, bson.M{"requests.uuid": uuid}).Decode(&acc)
 	if err != nil {
 		ar.logger.Println(err)
 		return nil, err
@@ -146,6 +162,41 @@ func (ar *Repo) GetAllRequest() ([]*Models.Request, error) {
 	}
 
 	return allRequests, nil
+}
+func (ar *Repo) GetAllNews() ([]*Models.News, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var allRequests []*Models.News
+
+	collection := ar.getCollectionVehicles()
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err // Avoid using log.Fatal in library code; return the error instead
+	}
+	defer cursor.Close(ctx)
+
+	// Iterate over the cursor
+	for cursor.Next(ctx) {
+		var request Models.News
+		if err := cursor.Decode(&request); err != nil {
+			return nil, err
+		}
+		allRequests = append(allRequests, &request)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// Reverse the slice
+	reverse(allRequests)
+
+	return allRequests, nil
+}
+func reverse(news []*Models.News) {
+	for i, j := 0, len(news)-1; i < j; i, j = i+1, j-1 {
+		news[i], news[j] = news[j], news[i]
+	}
 }
 func (ar *Repo) GetAllCausings() ([]*Models.VehicleCausing, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -251,6 +302,18 @@ func (ar *Repo) Create(user *Models.User) error {
 	ar.logger.Printf("Documents ID: %v\n", result.InsertedID)
 	return nil
 }
+func (ar *Repo) CreateNews(user *Models.News) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	accommodationCollection := ar.getCollection()
+	result, err := accommodationCollection.InsertOne(ctx, &user)
+	if err != nil {
+		ar.logger.Println(err)
+		return err
+	}
+	ar.logger.Printf("Documents ID: %v\n", result.InsertedID)
+	return nil
+}
 
 func (ar *Repo) DeleteByEmail(id string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -272,6 +335,11 @@ func (ar *Repo) DeleteByEmail(id string) error {
 }
 
 func (ar *Repo) getCollection() *mongo.Collection {
+	accommodationDatabase := ar.cli.Database("mongoBorder")
+	accommodationCollection := accommodationDatabase.Collection("border")
+	return accommodationCollection
+}
+func (ar *Repo) getCollectionNews() *mongo.Collection {
 	accommodationDatabase := ar.cli.Database("mongoBorder")
 	accommodationCollection := accommodationDatabase.Collection("border")
 	return accommodationCollection
