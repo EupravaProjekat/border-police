@@ -41,7 +41,7 @@ func main() {
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 	//profile
-	router.HandleFunc("/profile/{email}", hh.GetProfile).Methods("GET")
+	router.HandleFunc("/profile", hh.GetProfile).Methods("GET")
 	router.HandleFunc("/newrequest", hh.NewRequest).Methods("POST")
 	router.HandleFunc("/checkifuserexists", hh.CheckIfUserExists).Methods("GET")
 	router.HandleFunc("/getrequest/{id}", hh.GetRequest).Methods("GET")

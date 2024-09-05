@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"github.com/EupravaProjekat/border-police/Models"
 	"github.com/EupravaProjekat/border-police/Repo"
-	protos "github.com/MihajloJankovic/profile-service/protos/main"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"io"
 	"log"
 	"mime"
@@ -160,27 +158,14 @@ func (h *Borderhendler) GetallRequests(w http.ResponseWriter, r *http.Request) {
 }
 func (h *Borderhendler) GetProfile(w http.ResponseWriter, r *http.Request) {
 
-	emaila := mux.Vars(r)["email"]
-	ee := new(protos.ProfileRequest)
-	ee.Email = emaila
 	res := ValidateJwt(r, h.repo)
 	if res == nil {
 		err := errors.New("user doesnt exist")
 		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	response, err := h.repo.GetByEmail(ee.Email)
-	if err != nil || response == nil {
-		log.Printf("Operation Failed: %v\n", err)
-		w.WriteHeader(http.StatusNotFound)
-		_, err := w.Write([]byte("Profile not found"))
-		if err != nil {
-			return
-		}
-		return
-	}
 	w.WriteHeader(http.StatusOK)
-	RenderJSON(w, response)
+	RenderJSON(w, res)
 }
 
 func (h *Borderhendler) NewRequest(w http.ResponseWriter, r *http.Request) {
