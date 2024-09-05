@@ -49,7 +49,7 @@ func (h *Borderhendler) CheckIfUserExists(w http.ResponseWriter, r *http.Request
 func (h *Borderhendler) NewUser(w http.ResponseWriter, r *http.Request) {
 
 	res := ValidateJwt2(r, h.repo)
-
+	res2 := ValidateJwt(r, h.repo)
 	rt, err := DecodeBodyUser(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusAccepted)
@@ -62,7 +62,8 @@ func (h *Borderhendler) NewUser(w http.ResponseWriter, r *http.Request) {
 	}
 	newUUID := uuid.New().String()
 	rt.Uuid = newUUID
-	rt.Role = "Guest"
+	rt.Role = "Operator"
+	rt.Email = res2.Email
 	err = h.repo.NewUser(rt)
 	if err != nil {
 		log.Printf("Operation Failed: %v\n", err)
